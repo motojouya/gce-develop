@@ -27,8 +27,8 @@ sudo apt-get install -y google-cloud-sdk
 # mount disk
 mkdir /home/$username/work
 mount $device /home/$username/work
-ln -s /home/$username/work/dev ./dev
-ln -s /home/$username/work/doc ./doc
+ln -s /home/$username/work/dev /home/$username/dev
+ln -s /home/$username/work/doc /home/$username/doc
 
 # register route53
 curl https://raw.githubusercontent.com/motojouya/ec2-develop/master/dyndns.tmpl -O
