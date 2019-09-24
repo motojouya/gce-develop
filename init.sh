@@ -2,41 +2,57 @@
 set -x
 
 # definitions
-# export AWS_DEFAULT_REGION=asia-northeast1
-# asia-northeast1-b
-
 username=$1
 ssh_port=$2
-hosted_zone_id=$2
-domain=$4
+domain=$3
+device=$4
+project=$5
+dns_zone=$6
 
-ip=$(curl -s 169.254.169.254/latest/meta-data/public-ipv4)
+ip=$(curl http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip -H "Metadata-Flavor: Google")
+oauth_token=$(curl http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?audience=https://$domain/ -H "Metadata-Flavor: Google")
 
+# start configurations
 cd /home/ubuntu
 
 apt-get update
-apt-get install nvme-cli
+apt-get install jq
+# apt-get install nvme-cli
 
 # gcloud
 export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install -y google-cloud-sdk
+echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+apt-get update
+apt-get install -y google-cloud-sdk
 
 # mount disk
-mkdir /home/$username/work
-mount $device /home/$username/work
-ln -s /home/$username/work/dev /home/$username/dev
-ln -s /home/$username/work/doc /home/$username/doc
+mkdir /home/$username/disk
+mount $device /home/$username/disk
+ln -s /home/$username/disk/dev /home/$username/dev
+ln -s /home/$username/disk/doc /home/$username/doc
 
-# register route53
-curl https://raw.githubusercontent.com/motojouya/ec2-develop/master/dyndns.tmpl -O
-sed -e "s/{%IP%}/$ip/g;s/{%domain%}/$domain/g" dyndns.tmpl > change_resource_record_sets.json
-aws route53 change-resource-record-sets --hosted-zone-id $hosted_zone_id --change-batch file:///home/ubuntu/change_resource_record_sets.json
+# register cloud dns
+curl https://raw.githubusercontent.com/motojouya/gce-develop/master/dyndns.tmpl -O
+
+rrsets=$(curl -H "Referer: https://$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/rrsets)
+len=$(echo $rrsets | jq length)
+for i in $( seq 0 $(($len - 1)) ); do
+  record_type=$(echo $rrsets | jq -r ".rrsets[$i].type")
+  if [ $record_type = 'A' ]; then
+    privious_a_record=$(echo $rrsets | jq -r ".rrsets[$i].rrdatas[0]")
+    break
+  fi
+done
+
+sed -e "s/{%IP%}/$privious_a_record/g;s/{%domain%}/$domain/g;s/{%action%}/deletions/g" dyndns.tmpl > delete_resource_record_sets.json
+curl -XPOST -H "Referer: https://$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/changes -d @delete_resource_record_sets.json
+
+sed -e "s/{%IP%}/$ip/g;s/{%domain%}/$domain/g;s/{%action%}/additions/g" dyndns.tmpl > add_resource_record_sets.json
+curl -XPOST -H "Referer: https://$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/changes -d @add_resource_record_sets.json
 
 # ssh config
-curl https://raw.githubusercontent.com/motojouya/ec2-develop/master/sshd_config.tmpl -O
+curl https://raw.githubusercontent.com/motojouya/gce-develop/master/sshd_config.tmpl -O
 sed -e s/{%port%}/$ssh_port/g sshd_config.tmpl > sshd_config.init
 cp sshd_config.init /etc/ssh/sshd_config
 systemctl restart sshd
@@ -45,8 +61,8 @@ systemctl restart sshd
 apt-get install -y nodejs
 apt-get install -y npm
 
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 apt-get update
 apt-get install -y yarn
 npm install -g npx
@@ -54,13 +70,13 @@ npm install -g typescript typescript-language-server
 yarn global add create-react-app
 
 # install docker
-sudo apt-get install -y \
+apt-get install -y \
     apt-transport-https \
     ca-certificates \
     curl \
     gnupg-agent \
     software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 apt-key fingerprint 0EBFCD88
 add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
@@ -82,7 +98,7 @@ tar xzf letsencrypt.tar.gz
 cd /home/ubuntu
 
 apt-get install -y nginx
-curl https://raw.githubusercontent.com/motojouya/ec2-develop/master/http.conf.tmpl -O
+curl https://raw.githubusercontent.com/motojouya/gce-develop/master/http.conf.tmpl -O
 sed -e s/{%domain%}/$domain/g http.conf.tmpl > http.conf
 cp http.conf /etc/nginx/conf.d/http.conf
 
@@ -97,7 +113,6 @@ apt-get install -y certbot python-certbot-nginx
 
 # install others
 apt-get install -y neovim
-apt-get install -y jq
 apt-get install -y tree
 
 # git config --global core.editor 'vim -c "set fenc=utf-8"'

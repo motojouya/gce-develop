@@ -1,17 +1,13 @@
 {
-  "Changes": [
+  "{%action%}": [
     {
-      "Action": "UPSERT",
-      "ResourceRecordSet": {
-        "Name": "{%domain%}.",
-        "Type": "A",
-        "TTL": 60,
-        "ResourceRecords": [
-          {
-            "Value": "{%IP%}"
-          }
-        ]
-      }
+      "kind": "dns#resourceRecordSet",
+      "name": "{%domain%}.",
+      "rrdatas": [
+        "{%IP%}"
+      ],
+      "ttl": 60,
+      "type": "A"
     }
   ]
 }
