@@ -1,8 +1,9 @@
 #!/bin/bash
 set -x
-sudo su -
+# sudo su -
 
 # definitions
+DEBIAN_FRONTEND=noninteractive
 username=$1
 ssh_port=$2
 domain=$3
