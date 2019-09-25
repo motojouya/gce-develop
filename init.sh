@@ -13,6 +13,7 @@ ip=$(curl http://metadata.google.internal/computeMetadata/v1/instance/network-in
 oauth_token=$(curl http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?audience=https://$domain/ -H "Metadata-Flavor: Google")
 
 # start configurations
+sudo su -
 cd /home/ubuntu
 
 apt-get update
@@ -91,11 +92,11 @@ chmod +x /usr/local/bin/docker-compose
 gpasswd -a $username docker
 systemctl restart docker
 
-# install nginx and certbot for let's encrypt
-cd /etc
-cp /home/$username/letsencrypt.tar.gz letsencrypt.tar.gz
-tar xzf letsencrypt.tar.gz
-cd /home/ubuntu
+# # install nginx and certbot for let's encrypt
+# cd /etc
+# cp /home/$username/letsencrypt.tar.gz letsencrypt.tar.gz
+# tar xzf letsencrypt.tar.gz
+# cd /home/ubuntu
 
 apt-get install -y nginx
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/http.conf.tmpl -O

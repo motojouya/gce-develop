@@ -11,3 +11,9 @@ AcceptEnv LANG LC_*
 Subsystem       sftp    /usr/lib/openssh/sftp-server
 ClientAliveInterval 15
 ClientAliveCountMax 3
+UseDNS no
+
+#### Google OS Login control. Do not edit this section. ####
+AuthorizedKeysCommand /usr/bin/google_authorized_keys
+AuthorizedKeysCommandUser root
+#### End Google OS Login control section. ####
