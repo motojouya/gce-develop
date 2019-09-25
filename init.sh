@@ -1,5 +1,6 @@
 #!/bin/bash
 set -x
+sudo su -
 
 # definitions
 username=$1
@@ -9,16 +10,15 @@ device=$4
 project=$5
 dns_zone=$6
 
-ip=$(curl http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip -H "Metadata-Flavor: Google")
-oauth_token=$(curl http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?audience=https://$domain/ -H "Metadata-Flavor: Google")
-
 # start configurations
-sudo su -
 cd /home/ubuntu
 
 apt-get update
 apt-get install -y jq
 # apt-get install -y nvme-cli
+
+ip=$(curl http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip -H "Metadata-Flavor: Google")
+oauth_token=$(curl http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?audience=https://$domain/ -H "Metadata-Flavor: Google" | jq -r .access_token)
 
 # gcloud
 export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
@@ -27,11 +27,11 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt-get update
 apt-get install -y google-cloud-sdk
 
-# mount disk
-mkdir /home/$username/disk
-mount $device /home/$username/disk
-ln -s /home/$username/disk/dev /home/$username/dev
-ln -s /home/$username/disk/doc /home/$username/doc
+# # mount disk
+# mkdir /home/$username/disk
+# mount $device /home/$username/disk
+# ln -s /home/$username/disk/dev /home/$username/dev
+# ln -s /home/$username/disk/doc /home/$username/doc
 
 # register cloud dns
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/dyndns.tmpl -O
