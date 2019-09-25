@@ -17,8 +17,8 @@ sudo su -
 cd /home/ubuntu
 
 apt-get update
-apt-get install jq
-# apt-get install nvme-cli
+apt-get install -y jq
+# apt-get install -y nvme-cli
 
 # gcloud
 export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
