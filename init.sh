@@ -115,6 +115,8 @@ apt-get install -y certbot python-certbot-nginx
 # install others
 apt-get install -y neovim
 apt-get install -y tree
+curl https://raw.githubusercontent.com/motojouya/vimrc/master/.vimrc -o /home/$username/.vimrc
+curl https://raw.githubusercontent.com/motojouya/vimrc/master/.tmux.conf -o /home/$username/.tmux.conf
 
 # git config --global core.editor 'vim -c "set fenc=utf-8"'
 
