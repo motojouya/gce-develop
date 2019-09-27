@@ -1,6 +1,5 @@
 #!/bin/bash
 set -x
-# sudo su -
 
 # definitions
 DEBIAN_FRONTEND=noninteractive
@@ -28,11 +27,11 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt-get update
 apt-get install -y google-cloud-sdk
 
-# # mount disk
-# mkdir /home/$username/disk
-# mount $device /home/$username/disk
-# ln -s /home/$username/disk/dev /home/$username/dev
-# ln -s /home/$username/disk/doc /home/$username/doc
+# mount disk
+mkdir /home/$username/disk
+mount $device /home/$username/disk
+ln -s /home/$username/disk/dev /home/$username/dev
+ln -s /home/$username/disk/doc /home/$username/doc
 
 # register cloud dns
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/dyndns.tmpl -O
@@ -93,11 +92,11 @@ chmod +x /usr/local/bin/docker-compose
 gpasswd -a $username docker
 systemctl restart docker
 
-# # install nginx and certbot for let's encrypt
-# cd /etc
-# cp /home/$username/letsencrypt.tar.gz letsencrypt.tar.gz
-# tar xzf letsencrypt.tar.gz
-# cd /home/ubuntu
+# install nginx and certbot for let's encrypt
+cd /etc
+cp /home/$username/disk/letsencrypt.tar.gz letsencrypt.tar.gz
+tar xzf letsencrypt.tar.gz
+cd /home/ubuntu
 
 apt-get install -y nginx
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/http.conf.tmpl -O
