@@ -15,6 +15,8 @@ cd /home/ubuntu
 
 apt-get update
 apt-get install -y jq
+apt-get install -y neovim
+apt-get install -y tree
 # apt-get install -y nvme-cli
 
 ip=$(curl http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip -H "Metadata-Flavor: Google")
@@ -27,11 +29,11 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt-get update
 apt-get install -y google-cloud-sdk
 
-# mount disk
-mkdir /home/$username/disk
-mount $device /home/$username/disk
-ln -s /home/$username/disk/dev /home/$username/dev
-ln -s /home/$username/disk/doc /home/$username/doc
+# # mount disk
+# mkdir /home/$username/disk
+# mount $device /home/$username/disk
+# ln -s /home/$username/disk/dev /home/$username/dev
+# ln -s /home/$username/disk/doc /home/$username/doc
 
 # register cloud dns
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/dyndns.tmpl -O
@@ -89,14 +91,14 @@ apt-get install -y docker-ce docker-ce-cli containerd.io
 curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
-gpasswd -a $username docker
-systemctl restart docker
+# gpasswd -a $username docker
+# systemctl restart docker
 
-# install nginx and certbot for let's encrypt
-cd /etc
-cp /home/$username/disk/letsencrypt.tar.gz letsencrypt.tar.gz
-tar xzf letsencrypt.tar.gz
-cd /home/ubuntu
+# # install nginx and certbot for let's encrypt
+# cd /etc
+# cp /home/$username/disk/letsencrypt.tar.gz letsencrypt.tar.gz
+# tar xzf letsencrypt.tar.gz
+# cd /home/ubuntu
 
 apt-get install -y nginx
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/http.conf.tmpl -O
@@ -113,10 +115,8 @@ apt-get install -y certbot python-certbot-nginx
 # apt-get install -y gconf-service libasound2 libatk1.0-0 libatk-bridge2.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
 
 # install others
-apt-get install -y neovim
-apt-get install -y tree
-curl https://raw.githubusercontent.com/motojouya/vimrc/master/.vimrc -o /home/$username/.vimrc
-curl https://raw.githubusercontent.com/motojouya/vimrc/master/.tmux.conf -o /home/$username/.tmux.conf
+# curl https://raw.githubusercontent.com/motojouya/vimrc/master/.vimrc -o /home/$username/.vimrc
+# curl https://raw.githubusercontent.com/motojouya/vimrc/master/.tmux.conf -o /home/$username/.tmux.conf
 
 # git config --global core.editor 'vim -c "set fenc=utf-8"'
 
