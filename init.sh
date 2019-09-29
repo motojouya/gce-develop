@@ -35,6 +35,11 @@ apt-get install -y google-cloud-sdk
 # ln -s /home/$username/disk/dev /home/$username/dev
 # ln -s /home/$username/disk/doc /home/$username/doc
 
+mkdir /srv/bin
+curl https://raw.githubusercontent.com/motojouya/gce-develop/master/init_user.sh -o /srv/bin/init_user.sh
+sed -e "s/{%device%}/$device/g" /srv/bin/init_user.sh > /srv/bin/start_user.sh
+chown $username /srv/bin/start_user.sh
+
 # register cloud dns
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/dyndns.tmpl -O
 
