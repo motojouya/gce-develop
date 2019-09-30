@@ -2,7 +2,6 @@
 set -x
 
 # definitions
-DEBIAN_FRONTEND=noninteractive
 username=$1
 ssh_port=$2
 domain=$3
@@ -104,6 +103,11 @@ chmod +x /usr/local/bin/docker-compose
 # cp /home/$username/disk/letsencrypt.tar.gz letsencrypt.tar.gz
 # tar xzf letsencrypt.tar.gz
 # cd /home/ubuntu
+
+export DEBIAN_FRONTEND=noninteractive
+echo "Asia/Tokyo" > /etc/timezone
+# apt-get install -y tzdata
+dpkg-reconfigure -f noninteractive tzdata
 
 apt-get install -y nginx
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/http.conf.tmpl -O
