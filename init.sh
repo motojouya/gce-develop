@@ -28,9 +28,9 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt-get update
 apt-get install -y google-cloud-sdk
 
-# # mount disk
-# mkdir /home/$username/disk
-# mount $device /home/$username/disk
+# mount disk
+mkdir /home/$username
+mount /dev/$device /home/$username
 # ln -s /home/$username/disk/dev /home/$username/dev
 # ln -s /home/$username/disk/doc /home/$username/doc
 
@@ -95,14 +95,14 @@ apt-get install -y docker-ce docker-ce-cli containerd.io
 curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
-# gpasswd -a $username docker
-# systemctl restart docker
+gpasswd -a $username docker
+systemctl restart docker
 
-# # install nginx and certbot for let's encrypt
-# cd /etc
-# cp /home/$username/disk/letsencrypt.tar.gz letsencrypt.tar.gz
-# tar xzf letsencrypt.tar.gz
-# cd /home/ubuntu
+# install nginx and certbot for let's encrypt
+cd /etc
+cp /home/$username/letsencrypt.tar.gz letsencrypt.tar.gz
+tar xzf letsencrypt.tar.gz
+cd /home/ubuntu
 
 export DEBIAN_FRONTEND=noninteractive
 echo "Asia/Tokyo" > /etc/timezone
