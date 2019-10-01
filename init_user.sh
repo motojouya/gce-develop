@@ -24,7 +24,7 @@ cd ~
 # install others
 mkdir -p ~/.config/nvim
 sudo curl https://raw.githubusercontent.com/motojouya/vimrc/master/.vimrc -o ~/.config/nvim/init.vim
-sudo chown $USER ~/.vimrc
+sudo chown $USER ~/.config/nvim/init.vim
 sudo curl https://raw.githubusercontent.com/motojouya/vimrc/master/.tmux.conf -o ~/.tmux.conf
 sudo chown $USER ~/.tmux.conf
 

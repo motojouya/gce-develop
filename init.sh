@@ -31,8 +31,6 @@ apt-get install -y google-cloud-sdk
 # mount disk
 mkdir /home/$username
 mount /dev/$device /home/$username
-# ln -s /home/$username/disk/dev /home/$username/dev
-# ln -s /home/$username/disk/doc /home/$username/doc
 
 mkdir /srv/bin
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/init_user.sh -o /srv/bin/init_user.sh
@@ -122,10 +120,4 @@ apt-get install -y certbot python-certbot-nginx
 
 # install library for puppeteer
 # apt-get install -y gconf-service libasound2 libatk1.0-0 libatk-bridge2.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
-
-# install others
-# curl https://raw.githubusercontent.com/motojouya/vimrc/master/.vimrc -o /home/$username/.vimrc
-# curl https://raw.githubusercontent.com/motojouya/vimrc/master/.tmux.conf -o /home/$username/.tmux.conf
-
-# git config --global core.editor 'vim -c "set fenc=utf-8"'
 
