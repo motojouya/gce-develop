@@ -15,6 +15,7 @@ cd /home/ubuntu
 apt-get update
 apt-get install -y jq
 apt-get install -y neovim
+apt-get install -y tmux
 apt-get install -y tree
 # apt-get install -y nvme-cli
 
