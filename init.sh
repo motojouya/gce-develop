@@ -17,6 +17,11 @@ apt-get install -y jq
 apt-get install -y neovim
 apt-get install -y tmux
 apt-get install -y tree
+
+apt-add-repository -y ppa:mizuno-as/silversearcher-ag
+apt-get update -y
+apt-get install -y silversearcher-ag
+
 # apt-get install -y nvme-cli
 
 ip=$(curl http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip -H "Metadata-Flavor: Google")
@@ -116,6 +121,7 @@ apt-get install -y certbot python-certbot-nginx
 
 # others
 npm -g install firebase-tools
+/home/$username/.fzf/install --bin
 
 # install library for puppeteer
 # apt-get install -y gconf-service libasound2 libatk1.0-0 libatk-bridge2.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
