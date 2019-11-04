@@ -74,6 +74,7 @@ apt-get update
 apt-get install -y yarn
 npm install -g npx
 npm install -g typescript typescript-language-server
+npm install -g browser-sync
 yarn global add create-react-app
 
 # install docker
