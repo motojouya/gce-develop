@@ -26,7 +26,7 @@ apt-get install -y silversearcher-ag
 # apt-get install -y nvme-cli
 
 ip=$(curl http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip -H "Metadata-Flavor: Google")
-oauth_token=$(curl http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?audience=https://$domain/ -H "Metadata-Flavor: Google" | jq -r .access_token)
+oauth_token=$(curl http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?audience=https://develop.$domain/ -H "Metadata-Flavor: Google" | jq -r .access_token)
 
 # gcloud
 export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
@@ -42,7 +42,7 @@ mount /dev/$device /home/$username
 # register cloud dns
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/dyndns.tmpl -O
 
-rrsets=$(curl -H "Referer: https://$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/rrsets)
+rrsets=$(curl -H "Referer: https://develop.$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/rrsets)
 len=$(echo $rrsets | jq length)
 for i in $( seq 0 $(($len - 1)) ); do
   record_type=$(echo $rrsets | jq -r ".rrsets[$i].type")
@@ -53,10 +53,10 @@ for i in $( seq 0 $(($len - 1)) ); do
 done
 
 sed -e "s/{%IP%}/$privious_a_record/g;s/{%domain%}/$domain/g;s/{%action%}/deletions/g" dyndns.tmpl > delete_resource_record_sets.json
-curl -XPOST -H "Referer: https://$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/changes -d @delete_resource_record_sets.json
+curl -XPOST -H "Referer: https://develop.$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/changes -d @delete_resource_record_sets.json
 
 sed -e "s/{%IP%}/$ip/g;s/{%domain%}/$domain/g;s/{%action%}/additions/g" dyndns.tmpl > add_resource_record_sets.json
-curl -XPOST -H "Referer: https://$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/changes -d @add_resource_record_sets.json
+curl -XPOST -H "Referer: https://develop.$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/changes -d @add_resource_record_sets.json
 
 # ssh config
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/sshd_config.tmpl -O
