@@ -4,9 +4,9 @@ server {
   return 301 https://$host$request_uri;
 }
 server {
-  listen               443;
+  listen               443 ssl;
   server_name          develop.{%domain%};
-  ssl                  on;
+  # ssl                  on;
   ssl_protocols        TLSv1 TLSv1.1 TLSv1.2;
   ssl_certificate     /etc/letsencrypt/live/develop.{%domain%}/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/develop.{%domain%}/privkey.pem;
