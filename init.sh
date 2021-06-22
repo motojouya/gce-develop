@@ -43,7 +43,7 @@ mount /dev/$device /home/$username
 curl https://raw.githubusercontent.com/motojouya/gce-develop/master/dyndns.tmpl -O
 
 rrsets=$(curl -H "Referer: https://develop.$domain/" -H "Authorization: Bearer $oauth_token" -H "Content-Type: application/json" https://www.googleapis.com/dns/v1/projects/$project/managedZones/$dns_zone/rrsets)
-len=$(echo $rrsets | jq length)
+len=$(echo $rrsets | jq ".rrsets | length")
 for i in $( seq 0 $(($len - 1)) ); do
   record_type=$(echo $rrsets | jq -r ".rrsets[$i].type")
   if [ $record_type = 'A' ]; then
